@@ -1,15 +1,101 @@
-[gd_scene load_steps=3 format=3 uid="uid://dv4scuc54rupc"]
+[gd_scene load_steps=6 format=4 uid="uid://dv4scuc54rupc"]
 
+[ext_resource type="Texture2D" uid="uid://cwtdfb6r7u76q" path="res://assets/plains.png" id="1_lnu2h"]
 [ext_resource type="PackedScene" uid="uid://b0rys556f6m6g" path="res://scenes/enemy.tscn" id="2_lnu2h"]
 [ext_resource type="PackedScene" uid="uid://ciot2brni3hb6" path="res://scenes/player.tscn" id="2_yqjtg"]
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_lbhrr"]
+texture = ExtResource("1_lnu2h")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
+5:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+4:2/0 = 0
+5:2/0 = 0
+0:3/0 = 0
+1:3/0 = 0
+2:3/0 = 0
+3:3/0 = 0
+0:4/0 = 0
+1:4/0 = 0
+2:4/0 = 0
+3:4/0 = 0
+4:4/0 = 0
+5:4/0 = 0
+0:5/0 = 0
+1:5/0 = 0
+2:5/0 = 0
+3:5/0 = 0
+4:5/0 = 0
+5:5/0 = 0
+0:6/0 = 0
+1:6/0 = 0
+2:6/0 = 0
+3:6/0 = 0
+4:6/0 = 0
+5:6/0 = 0
+0:7/0 = 0
+1:7/0 = 0
+2:7/0 = 0
+3:7/0 = 0
+0:8/0 = 0
+1:8/0 = 0
+2:8/0 = 0
+3:8/0 = 0
+4:8/0 = 0
+5:8/0 = 0
+0:9/0 = 0
+1:9/0 = 0
+2:9/0 = 0
+3:9/0 = 0
+4:9/0 = 0
+5:9/0 = 0
+0:10/0 = 0
+1:10/0 = 0
+2:10/0 = 0
+3:10/0 = 0
+4:10/0 = 0
+5:10/0 = 0
+0:11/0 = 0
+1:11/0 = 0
+2:11/0 = 0
+3:11/0 = 0
+4:11/0 = 0
+5:11/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_iywne"]
+sources/0 = SubResource("TileSetAtlasSource_lbhrr")
+
 [node name="game" type="Node2D"]
 
-[node name="player2" parent="." instance=ExtResource("2_yqjtg")]
+[node name="TileMap" type="TileMap" parent="."]
+tile_set = SubResource("TileSet_iywne")
+rendering_quadrant_size = 17
+format = 2
+
+[node name="Layer0" type="TileMapLayer" parent="TileMap"]
+use_parent_material = true
+tile_map_data = PackedByteArray("AAAMABIAAAACAAEAAAANABIAAAACAAEAAAAOABIAAAACAAEAAAAPABIAAAACAAEAAAAQABIAAAACAAEAAAARABIAAAACAAEAAAASABIAAAACAAEAAAATABIAAAACAAEAAAAUABIAAAACAAEAAAAVABIAAAACAAEAAAAWABIAAAACAAEAAAAMABEAAAACAAAAAAANABEAAAACAAAAAAAOABEAAAACAAAAAAAPABEAAAACAAAAAAAQABEAAAACAAAAAAARABEAAAACAAAAAAASABEAAAACAAAAAAATABEAAAACAAAAAAAUABEAAAACAAAAAAAVABEAAAACAAAAAAAWABEAAAACAAAAAAAMABMAAAACAAIAAAANABMAAAACAAIAAAAOABMAAAACAAIAAAAPABMAAAACAAIAAAAQABMAAAACAAIAAAARABMAAAACAAIAAAASABMAAAACAAIAAAATABMAAAACAAIAAAAUABMAAAACAAIAAAAVABMAAAACAAIAAAAWABMAAAACAAIAAAAXABEAAAACAAAAAAAYABEAAAACAAAAAAAXABIAAAACAAEAAAAXABMAAAACAAIAAAAYABIAAAACAAEAAAAYABMAAAACAAIAAAALABEAAAACAAAAAAALABIAAAACAAEAAAALABMAAAACAAIAAAAKABEAAAACAAAAAAAKABIAAAACAAEAAAAKABMAAAACAAIAAAAJABEAAAACAAAAAAAJABIAAAACAAEAAAAJABMAAAACAAIAAAAIABEAAAACAAAAAAAIABIAAAACAAEAAAAIABMAAAACAAIAAAAHABEAAAACAAAAAAAHABIAAAACAAEAAAAHABMAAAACAAIAAAAGABEAAAACAAAAAAAGABIAAAACAAEAAAAGABMAAAACAAIAAAAZABEAAAACAAAAAAAZABIAAAACAAEAAAAZABMAAAACAAIAAAAaABEAAAACAAAAAAAaABIAAAACAAEAAAAaABMAAAACAAIAAAAbABEAAAACAAAAAAAbABIAAAACAAEAAAAbABMAAAACAAIAAAAcABEAAAACAAAAAAAcABIAAAACAAEAAAAcABMAAAACAAIAAAAdABEAAAACAAAAAAAdABIAAAACAAEAAAAdABMAAAACAAIAAAA=")
+tile_set = SubResource("TileSet_iywne")
+rendering_quadrant_size = 17
+
+[node name="player" parent="." instance=ExtResource("2_yqjtg")]
 position = Vector2(286, 282)
 
-[node name="Camera2D" type="Camera2D" parent="player2"]
+[node name="Camera2D" type="Camera2D" parent="player"]
 zoom = Vector2(3, 3)
 
 [node name="enemy" parent="." instance=ExtResource("2_lnu2h")]
-position = Vector2(341, 385)
+position = Vector2(311, 314)

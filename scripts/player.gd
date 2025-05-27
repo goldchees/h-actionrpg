@@ -7,8 +7,11 @@ var current_state: States = States.IDLE
 @onready var animatedSprite2d := $AnimatedSprite2D
 @onready var animationPlayer := $AnimationPlayer
 @onready var attackArea := $attackArea
+@onready var knockbackTimer := $knockbackTimer
 var speed := 100
 var player_facing: String
+var knockbackPower: int = 100
+var get_knockback: bool = false
 
 func _ready() -> void:
 	player_facing = "down"
@@ -49,11 +52,14 @@ func do_walk():
 	elif Input.is_action_pressed("down"):
 		animatedSprite2d.play("b_walk")
 		player_facing = "down"
+	speed = 100
 	check_if_attack()
+	move()
 	
+func move():
 	var dir := Input.get_vector("left","right","up","down")
 	velocity = speed * dir
-	if dir == Vector2.ZERO:
+	if dir == Vector2.ZERO and current_state == States.WALK:
 		current_state = States.IDLE
 	move_and_slide()
 
@@ -64,6 +70,10 @@ func do_attack():
 		animationPlayer.play("f_attack")
 	elif player_facing == "down":
 		animationPlayer.play("b_attack")
+	velocity = -velocity
+	move_and_slide()
+	#speed = 50
+	#move()
 
 func check_dir():
 	if Input.is_action_just_pressed("right"):
@@ -92,5 +102,13 @@ func finished_attack():
 		current_state = States.IDLE
 
 func _on_attack_area_body_entered(body: Node2D) -> void:
-	if body.has_method("enemy"):
+	if body.has_method("enemy") and current_state == States.ATTACK:
+		body.damage(velocity)
 		print("attack")
+
+func player():
+	pass
+
+
+func _on_knockback_timer_timeout() -> void:
+	get_knockback = false

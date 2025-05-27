@@ -732,6 +732,7 @@ _data = {
 }
 
 [node name="player" type="CharacterBody2D"]
+motion_mode = 1
 script = ExtResource("1_s551d")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -761,4 +762,9 @@ libraries = {
 &"": SubResource("AnimationLibrary_0mr0g")
 }
 
+[node name="knockbackTimer" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+
 [connection signal="body_entered" from="attackArea" to="." method="_on_attack_area_body_entered"]
+[connection signal="timeout" from="knockbackTimer" to="." method="_on_knockback_timer_timeout"]
