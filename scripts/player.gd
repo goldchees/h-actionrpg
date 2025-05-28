@@ -7,11 +7,11 @@ var current_state: States = States.IDLE
 @onready var animatedSprite2d := $AnimatedSprite2D
 @onready var animationPlayer := $AnimationPlayer
 @onready var attackArea := $attackArea
-@onready var knockbackTimer := $knockbackTimer
 var speed := 100
 var player_facing: String
-var knockbackPower: int = 100
-var get_knockback: bool = false
+var knockbackPower: int = 50
+var knockback
+var knockbackTimer: float = 0.0
 
 func _ready() -> void:
 	player_facing = "down"
@@ -24,7 +24,7 @@ func _physics_process(delta: float) -> void:
 		States.WALK:
 			do_walk()
 		States.ATTACK:
-			do_attack()
+			do_attack(delta)
 
 func do_idle():
 	if player_facing == "right" or player_facing == "left":
@@ -63,18 +63,22 @@ func move():
 		current_state = States.IDLE
 	move_and_slide()
 
-func do_attack():
+func do_attack(delta):
 	if player_facing == "right" or player_facing == "left":
 		animationPlayer.play("side_attack")
 	elif player_facing == "up":
 		animationPlayer.play("f_attack")
 	elif player_facing == "down":
 		animationPlayer.play("b_attack")
-	velocity = -velocity
-	move_and_slide()
-	#speed = 50
-	#move()
-
+	if knockbackTimer > 0.0:
+		print('run knockback')
+		velocity = knockback
+		knockbackTimer -= delta
+		move_and_slide()
+	elif knockbackTimer <= 0.0:
+		print('knockback timer timeout')
+		knockback = Vector2.ZERO
+		move_and_slide()
 func check_dir():
 	if Input.is_action_just_pressed("right"):
 		player_facing = "right"
@@ -104,11 +108,15 @@ func finished_attack():
 func _on_attack_area_body_entered(body: Node2D) -> void:
 	if body.has_method("enemy") and current_state == States.ATTACK:
 		body.damage(velocity)
+		var knockback_dir = (global_position - body.global_position).normalized()
+		apply_knockback(knockback_dir, knockbackPower, 0.05)
 		print("attack")
+
+			
 
 func player():
 	pass
 
-
-func _on_knockback_timer_timeout() -> void:
-	get_knockback = false
+func apply_knockback(direction: Vector2, force: float, knockbackDuration: float):
+	knockback = direction * force
+	knockbackTimer = knockbackDuration
