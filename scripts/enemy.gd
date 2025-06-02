@@ -4,15 +4,14 @@ enum States {idle, chase, attack, hurt}
 var current_state = States.idle
 @onready var animationPlayer := $AnimationPlayer
 @onready var player := $"../player"
-@onready var knockbackTimer := $knockBackTimer
+@onready var hitParticles := $hitParticles
 var player_in_range := false
 var dir: Vector2
 var speed: int = 50
-var knockbackPower: int = 100
 
-var get_knockback: bool = false
-
-
+var knockback: Vector2
+var min_knockback := 100
+var slow_knockback := 1.1
 
 func _ready() -> void:
 	animationPlayer.play("RESET")
@@ -42,20 +41,21 @@ func do_chase():
 	move_and_slide()
 
 func do_hurt():
-	if get_knockback:
-		dir = (player.velocity - velocity).normalized() 
-		velocity = dir * knockbackPower
-	if get_knockback == false:
-		velocity = Vector2.ZERO
+	if knockback.length() > min_knockback:
+		knockback /= slow_knockback
+		velocity = knockback
+		move_and_slide()
+	else:
 		current_state = States.idle
-	print(velocity)
-	move_and_slide()
 
 func damage(player_vel):
 	current_state = States.hurt
 	animationPlayer.play("damage")
-	get_knockback = true
-	knockbackTimer.start()
+	knockback = (position - player.position).normalized() * 200
+	hitParticles.restart()
+	hitParticles.rotation = player.global_position.angle_to_point(global_position)
+	hitParticles.emitting = true
+
 
 func enemy():
 	pass
@@ -69,7 +69,3 @@ func _on_detect_range_body_entered(body: Node2D) -> void:
 func _on_detect_range_body_exited(body: Node2D) -> void:
 	if body.has_method('player'):
 		player_in_range = false
-
-
-func _on_knock_back_timer_timeout() -> void:
-	get_knockback = false

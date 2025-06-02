@@ -95,7 +95,7 @@ rendering_quadrant_size = 17
 position = Vector2(311, 314)
 
 [node name="player" parent="." instance=ExtResource("2_yqjtg")]
-position = Vector2(286, 282)
+position = Vector2(211, 283)
 
 [node name="Camera2D" type="Camera2D" parent="player"]
 zoom = Vector2(3, 3)

@@ -9,9 +9,13 @@ var current_state: States = States.IDLE
 @onready var attackArea := $attackArea
 var speed := 100
 var player_facing: String
-var knockbackPower: int = 50
-var knockback
-var knockbackTimer: float = 0.0
+var dir: Vector2
+
+var can_attack: bool = true
+
+var min_knockback := 50
+var slow_knockback := 1.6
+var knockback: Vector2
 
 func _ready() -> void:
 	player_facing = "down"
@@ -57,7 +61,7 @@ func do_walk():
 	move()
 	
 func move():
-	var dir := Input.get_vector("left","right","up","down")
+	dir = Input.get_vector("left","right","up","down")
 	velocity = speed * dir
 	if dir == Vector2.ZERO and current_state == States.WALK:
 		current_state = States.IDLE
@@ -70,15 +74,12 @@ func do_attack(delta):
 		animationPlayer.play("f_attack")
 	elif player_facing == "down":
 		animationPlayer.play("b_attack")
-	if knockbackTimer > 0.0:
-		print('run knockback')
-		velocity = knockback
-		knockbackTimer -= delta
-		move_and_slide()
-	elif knockbackTimer <= 0.0:
-		print('knockback timer timeout')
-		knockback = Vector2.ZERO
-		move_and_slide()
+	if knockback.length() > min_knockback: 
+		knockback /= slow_knockback 
+		velocity = knockback 
+		move_and_slide() 
+		return 
+
 func check_dir():
 	if Input.is_action_just_pressed("right"):
 		player_facing = "right"
@@ -104,19 +105,16 @@ func flip():
 func finished_attack():
 	if current_state == States.ATTACK:
 		current_state = States.IDLE
+		can_attack = true
 
 func _on_attack_area_body_entered(body: Node2D) -> void:
-	if body.has_method("enemy") and current_state == States.ATTACK:
+	if body.has_method("enemy") and current_state == States.ATTACK and can_attack:
 		body.damage(velocity)
-		var knockback_dir = (global_position - body.global_position).normalized()
-		apply_knockback(knockback_dir, knockbackPower, 0.05)
 		print("attack")
-
-			
+		knockback = (position - body.position).normalized() * 200
+		#knockback = (-dir) * 200
+		can_attack = false
+		
 
 func player():
 	pass
-
-func apply_knockback(direction: Vector2, force: float, knockbackDuration: float):
-	knockback = direction * force
-	knockbackTimer = knockbackDuration

@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://e48xyq2coo21" path="res://assets/player.png" id="2_yjax8"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_oc1kf"]
-size = Vector2(8, 16)
+size = Vector2(10, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0mr0g"]
 atlas = ExtResource("2_oc1kf")
@@ -737,26 +737,31 @@ wall_min_slide_angle = 0.0
 script = ExtResource("1_s551d")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-1, 13)
+position = Vector2(0, -1.5)
 shape = SubResource("RectangleShape2D_oc1kf")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_0mr0g")
 animation = &"side_walk"
+offset = Vector2(1, -15)
 
 [node name="attackArea" type="Area2D" parent="."]
 
 [node name="bAttack" type="CollisionPolygon2D" parent="attackArea"]
 visible = false
+position = Vector2(1, -15)
 polygon = PackedVector2Array(16, 8, 18, 19, 14, 26, 4, 32, -3, 32, -11, 27, -16, 18, -15, 9, -10, 4, -8, 20, 2, 25)
 
 [node name="fAttack" type="CollisionPolygon2D" parent="attackArea"]
 visible = false
+position = Vector2(1, -15)
 polygon = PackedVector2Array(-16, 21, -6, 6, 9, 11, 4, 18, 11, 26, 16, 17, 16, 10, 12, 3, 2, -3, -5, -3, -15, 4, -18, 10, -18, 17)
 
 [node name="sideAttack" type="CollisionPolygon2D" parent="attackArea"]
 visible = false
+position = Vector2(1, -15)
 polygon = PackedVector2Array(-6, 17, -14, 19, -14, 22, -5, 30, 7, 28, 17, 19, 17, 8, 13, -1, 9, -2, 8, 17)
+disabled = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

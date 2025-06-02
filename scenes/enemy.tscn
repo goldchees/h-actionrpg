@@ -1,10 +1,30 @@
-[gd_scene load_steps=8 format=3 uid="uid://b0rys556f6m6g"]
+[gd_scene load_steps=11 format=3 uid="uid://b0rys556f6m6g"]
 
 [ext_resource type="Script" uid="uid://c64t12fg4ea0j" path="res://scripts/enemy.gd" id="1_md0e3"]
 [ext_resource type="Texture2D" uid="uid://bsr7pn3vkgxmd" path="res://icon.svg" id="2_4ra3w"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_5uy6h"]
-size = Vector2(19, 20)
+[sub_resource type="Gradient" id="Gradient_md0e3"]
+offsets = PackedFloat32Array(0.0636364, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_4ra3w"]
+gradient = SubResource("Gradient_md0e3")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_5uy6h"]
+lifetime_randomness = 1.0
+particle_flag_disable_z = true
+emission_shape_offset = Vector3(10, 0, 0)
+emission_shape = 1
+emission_sphere_radius = 10.0
+spread = 57.953
+initial_velocity_min = 30.0
+initial_velocity_max = 50.0
+scale_min = 2.0
+scale_max = 4.0
+color_ramp = SubResource("GradientTexture1D_4ra3w")
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_4ra3w"]
+radius = 10.0499
 
 [sub_resource type="Animation" id="Animation_4ra3w"]
 length = 0.001
@@ -50,9 +70,17 @@ radius = 86.0058
 motion_mode = 1
 script = ExtResource("1_md0e3")
 
+[node name="hitParticles" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 40
+lifetime = 0.55
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_5uy6h")
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 modulate = Color(0.866667, 1, 0, 1)
-shape = SubResource("RectangleShape2D_5uy6h")
+shape = SubResource("CircleShape2D_4ra3w")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.164063, 0.164063)
@@ -66,12 +94,8 @@ libraries = {
 [node name="detectRange" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="detectRange"]
+visible = false
 shape = SubResource("CircleShape2D_md0e3")
-
-[node name="knockBackTimer" type="Timer" parent="."]
-wait_time = 0.3
-one_shot = true
 
 [connection signal="body_entered" from="detectRange" to="." method="_on_detect_range_body_entered"]
 [connection signal="body_exited" from="detectRange" to="." method="_on_detect_range_body_exited"]
-[connection signal="timeout" from="knockBackTimer" to="." method="_on_knock_back_timer_timeout"]
