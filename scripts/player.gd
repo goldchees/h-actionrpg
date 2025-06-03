@@ -7,6 +7,7 @@ var current_state: States = States.IDLE
 @onready var animatedSprite2d := $AnimatedSprite2D
 @onready var animationPlayer := $AnimationPlayer
 @onready var attackArea := $attackArea
+@onready var hurtTimer := $hurtTimer
 var speed := 100
 var player_facing: String
 var dir: Vector2
@@ -17,11 +18,15 @@ var min_knockback := 50
 var slow_knockback := 1.6
 var knockback: Vector2
 
+var health: int = 50
+var can_take_damage: bool = true
+
 func _ready() -> void:
 	player_facing = "down"
 	scale = Vector2(1,1)
 
 func _physics_process(delta: float) -> void:
+	check_knockback()
 	match current_state:
 		States.IDLE:
 			do_idle()
@@ -74,6 +79,8 @@ func do_attack(delta):
 		animationPlayer.play("f_attack")
 	elif player_facing == "down":
 		animationPlayer.play("b_attack")
+
+func check_knockback():
 	if knockback.length() > min_knockback: 
 		knockback /= slow_knockback 
 		velocity = knockback 
@@ -112,9 +119,26 @@ func _on_attack_area_body_entered(body: Node2D) -> void:
 		body.damage(velocity)
 		print("attack")
 		knockback = (position - body.position).normalized() * 200
-		#knockback = (-dir) * 200
 		can_attack = false
-		
+
+func take_damage(enemy):
+	if can_take_damage:
+		print('taking damage')
+		#animationPlayer.play("hurt")
+		# instead of using hurt animation, use tween bc can't play 2 anim at same time
+		animatedSprite2d.modulate = Color.RED
+		var tween = create_tween()
+		tween.tween_property(animatedSprite2d, 'modulate', Color.WHITE, 0.5)
+		#tween.play()
+		if tween.is_running():
+			print('tween running')
+		knockback = (position - enemy.position).normalized() * 400
+		hurtTimer.start()
+		can_take_damage = false
 
 func player():
 	pass
+
+
+func _on_hurt_timer_timeout() -> void:
+	can_take_damage = true

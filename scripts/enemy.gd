@@ -5,6 +5,7 @@ var current_state = States.idle
 @onready var animationPlayer := $AnimationPlayer
 @onready var player := $"../player"
 @onready var hitParticles := $hitParticles
+@onready var attackTimer := $attackTimer
 var player_in_range := false
 var dir: Vector2
 var speed: int = 50
@@ -13,8 +14,16 @@ var knockback: Vector2
 var min_knockback := 100
 var slow_knockback := 1.1
 
+var health: int = 30
+var can_attack: bool = true
+var in_attack_range: bool = false
+
 func _ready() -> void:
 	animationPlayer.play("RESET")
+	health = 30
+
+func _process(delta: float) -> void:
+	pass
 
 func _physics_process(delta: float) -> void:
 	match current_state:
@@ -23,7 +32,7 @@ func _physics_process(delta: float) -> void:
 		States.chase:
 			do_chase()
 		States.attack:
-			pass
+			do_attack()
 		States.hurt:
 			do_hurt()
 
@@ -46,6 +55,7 @@ func do_hurt():
 		velocity = knockback
 		move_and_slide()
 	else:
+		check_if_dead()
 		current_state = States.idle
 
 func damage(player_vel):
@@ -55,6 +65,15 @@ func damage(player_vel):
 	hitParticles.restart()
 	hitParticles.rotation = player.global_position.angle_to_point(global_position)
 	hitParticles.emitting = true
+	health -= 10
+
+func do_attack():
+	if can_attack and in_attack_range:
+		player.health -= 10
+		print(player.health)
+		player.take_damage(self)
+		can_attack = false
+		attackTimer.start()
 
 
 func enemy():
@@ -66,6 +85,32 @@ func _on_detect_range_body_entered(body: Node2D) -> void:
 		player_in_range = true
 
 
+
 func _on_detect_range_body_exited(body: Node2D) -> void:
 	if body.has_method('player'):
 		player_in_range = false
+		
+
+func check_if_dead():
+	if health <= 0:
+		queue_free()
+
+
+func _on_attack_range_body_entered(body: Node2D) -> void:
+	if body.has_method('player'):
+		in_attack_range = true
+		print('in range')
+		current_state = States.attack
+		
+
+
+func _on_attack_timer_timeout() -> void:
+	can_attack = true
+
+
+func _on_attack_range_body_exited(body: Node2D) -> void:
+	if body.has_method('player'):
+		in_attack_range = false
+		print('not in range')
+		current_state = States.idle
+		

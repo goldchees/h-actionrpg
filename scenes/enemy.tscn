@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://b0rys556f6m6g"]
+[gd_scene load_steps=12 format=3 uid="uid://b0rys556f6m6g"]
 
 [ext_resource type="Script" uid="uid://c64t12fg4ea0j" path="res://scripts/enemy.gd" id="1_md0e3"]
 [ext_resource type="Texture2D" uid="uid://bsr7pn3vkgxmd" path="res://icon.svg" id="2_4ra3w"]
@@ -66,6 +66,9 @@ _data = {
 [sub_resource type="CircleShape2D" id="CircleShape2D_md0e3"]
 radius = 86.0058
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_md0e3"]
+size = Vector2(24, 24)
+
 [node name="enemy" type="CharacterBody2D"]
 motion_mode = 1
 script = ExtResource("1_md0e3")
@@ -97,5 +100,17 @@ libraries = {
 visible = false
 shape = SubResource("CircleShape2D_md0e3")
 
+[node name="attackRange" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="attackRange"]
+shape = SubResource("RectangleShape2D_md0e3")
+
+[node name="attackTimer" type="Timer" parent="."]
+wait_time = 0.6
+one_shot = true
+
 [connection signal="body_entered" from="detectRange" to="." method="_on_detect_range_body_entered"]
 [connection signal="body_exited" from="detectRange" to="." method="_on_detect_range_body_exited"]
+[connection signal="body_entered" from="attackRange" to="." method="_on_attack_range_body_entered"]
+[connection signal="body_exited" from="attackRange" to="." method="_on_attack_range_body_exited"]
+[connection signal="timeout" from="attackTimer" to="." method="_on_attack_timer_timeout"]

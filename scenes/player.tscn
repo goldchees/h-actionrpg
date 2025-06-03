@@ -1,11 +1,11 @@
-[gd_scene load_steps=65 format=3 uid="uid://ciot2brni3hb6"]
+[gd_scene load_steps=66 format=3 uid="uid://ciot2brni3hb6"]
 
 [ext_resource type="Script" uid="uid://cbt2gicxn2s64" path="res://scripts/player.gd" id="1_s551d"]
 [ext_resource type="Texture2D" uid="uid://dackofgernnyn" path="res://assets/h-player-Sheet.png" id="2_oc1kf"]
 [ext_resource type="Texture2D" uid="uid://e48xyq2coo21" path="res://assets/player.png" id="2_yjax8"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_oc1kf"]
-size = Vector2(10, 15)
+size = Vector2(6, 12)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0mr0g"]
 atlas = ExtResource("2_oc1kf")
@@ -488,6 +488,18 @@ tracks/3/keys = {
 "update": 1,
 "values": [false]
 }
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("AnimatedSprite2D:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
 
 [sub_resource type="Animation" id="Animation_yjax8"]
 resource_name = "b_attack"
@@ -645,6 +657,22 @@ tracks/5/keys = {
 "values": [true]
 }
 
+[sub_resource type="Animation" id="Animation_qhqgy"]
+resource_name = "hurt"
+length = 0.6
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.566667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 0, 0, 1), Color(1, 1, 1, 1)]
+}
+
 [sub_resource type="Animation" id="Animation_0mr0g"]
 resource_name = "side_attack"
 length = 0.4
@@ -728,6 +756,7 @@ _data = {
 &"RESET": SubResource("Animation_oc1kf"),
 &"b_attack": SubResource("Animation_yjax8"),
 &"f_attack": SubResource("Animation_v7tvf"),
+&"hurt": SubResource("Animation_qhqgy"),
 &"side_attack": SubResource("Animation_0mr0g")
 }
 
@@ -737,7 +766,7 @@ wall_min_slide_angle = 0.0
 script = ExtResource("1_s551d")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -1.5)
+position = Vector2(0, -2)
 shape = SubResource("RectangleShape2D_oc1kf")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -768,4 +797,9 @@ libraries = {
 &"": SubResource("AnimationLibrary_0mr0g")
 }
 
+[node name="hurtTimer" type="Timer" parent="."]
+wait_time = 0.7
+one_shot = true
+
 [connection signal="body_entered" from="attackArea" to="." method="_on_attack_area_body_entered"]
+[connection signal="timeout" from="hurtTimer" to="." method="_on_hurt_timer_timeout"]
