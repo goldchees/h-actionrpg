@@ -1,7 +1,8 @@
-[gd_scene load_steps=12 format=3 uid="uid://b0rys556f6m6g"]
+[gd_scene load_steps=14 format=3 uid="uid://b0rys556f6m6g"]
 
 [ext_resource type="Script" uid="uid://c64t12fg4ea0j" path="res://scripts/enemy.gd" id="1_md0e3"]
-[ext_resource type="Texture2D" uid="uid://bsr7pn3vkgxmd" path="res://icon.svg" id="2_4ra3w"]
+[ext_resource type="Shader" uid="uid://btxibuir0fcxx" path="res://scenes/flash.tres" id="2_4ra3w"]
+[ext_resource type="Texture2D" uid="uid://by4563ysbxk6b" path="res://assets/h-enemy.png" id="2_md0e3"]
 
 [sub_resource type="Gradient" id="Gradient_md0e3"]
 offsets = PackedFloat32Array(0.0636364, 1)
@@ -23,14 +24,20 @@ scale_min = 2.0
 scale_max = 4.0
 color_ramp = SubResource("GradientTexture1D_4ra3w")
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_4ra3w"]
-radius = 10.0499
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4ra3w"]
+size = Vector2(9, 16)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5uy6h"]
+resource_local_to_scene = true
+shader = ExtResource("2_4ra3w")
+shader_parameter/enabled = false
+shader_parameter/tint = Color(1, 1, 1, 1)
 
 [sub_resource type="Animation" id="Animation_4ra3w"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
-tracks/0/enabled = true
+tracks/0/enabled = false
 tracks/0/path = NodePath("Sprite2D:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
@@ -40,13 +47,25 @@ tracks/0/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 1)]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:material:shader_parameter/enabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
 
 [sub_resource type="Animation" id="Animation_md0e3"]
 resource_name = "damage"
 length = 0.3
 tracks/0/type = "value"
 tracks/0/imported = false
-tracks/0/enabled = true
+tracks/0/enabled = false
 tracks/0/path = NodePath("Sprite2D:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
@@ -55,6 +74,18 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Color(1, 0, 0, 1), Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:material:shader_parameter/enabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.166667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_5uy6h"]
@@ -67,7 +98,7 @@ _data = {
 radius = 86.0058
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_md0e3"]
-size = Vector2(24, 24)
+size = Vector2(14, 19)
 
 [node name="enemy" type="CharacterBody2D"]
 motion_mode = 1
@@ -83,11 +114,12 @@ process_material = SubResource("ParticleProcessMaterial_5uy6h")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 modulate = Color(0.866667, 1, 0, 1)
-shape = SubResource("CircleShape2D_4ra3w")
+position = Vector2(0.5, 1)
+shape = SubResource("RectangleShape2D_4ra3w")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.164063, 0.164063)
-texture = ExtResource("2_4ra3w")
+material = SubResource("ShaderMaterial_5uy6h")
+texture = ExtResource("2_md0e3")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -103,6 +135,7 @@ shape = SubResource("CircleShape2D_md0e3")
 [node name="attackRange" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="attackRange"]
+position = Vector2(0, 1.5)
 shape = SubResource("RectangleShape2D_md0e3")
 
 [node name="attackTimer" type="Timer" parent="."]

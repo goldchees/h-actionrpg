@@ -6,6 +6,7 @@ var current_state = States.idle
 @onready var player := $"../player"
 @onready var hitParticles := $hitParticles
 @onready var attackTimer := $attackTimer
+
 var player_in_range := false
 var dir: Vector2
 var speed: int = 50
@@ -21,6 +22,7 @@ var in_attack_range: bool = false
 func _ready() -> void:
 	animationPlayer.play("RESET")
 	health = 30
+	scale.x = 1
 
 func _process(delta: float) -> void:
 	pass
@@ -47,7 +49,15 @@ func do_chase():
 		velocity = dir * speed
 	elif player_in_range == false:
 		current_state = States.idle
+	for child in get_children():
+		if child is Node2D:
+			if dir < Vector2.ZERO:
+				child.scale.x = 1
+			else:
+				child.scale.x = -1
 	move_and_slide()
+
+
 
 func do_hurt():
 	if knockback.length() > min_knockback:
@@ -69,8 +79,6 @@ func damage(player_vel):
 
 func do_attack():
 	if can_attack and in_attack_range:
-		player.health -= 10
-		print(player.health)
 		player.take_damage(self)
 		can_attack = false
 		attackTimer.start()

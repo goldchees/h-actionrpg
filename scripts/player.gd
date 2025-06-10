@@ -8,6 +8,8 @@ var current_state: States = States.IDLE
 @onready var animationPlayer := $AnimationPlayer
 @onready var attackArea := $attackArea
 @onready var hurtTimer := $hurtTimer
+@onready var sfx_sword_slash: AudioStreamPlayer2D = $sfx_swordSlash
+
 var speed := 100
 var player_facing: String
 var dir: Vector2
@@ -18,8 +20,8 @@ var min_knockback := 50
 var slow_knockback := 1.6
 var knockback: Vector2
 
-var health: int = 50
 var can_take_damage: bool = true
+signal player_death
 
 func _ready() -> void:
 	player_facing = "down"
@@ -27,6 +29,9 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	check_knockback()
+	if Global.health <= 0:
+		print("die")
+		player_death.emit()
 	match current_state:
 		States.IDLE:
 			do_idle()
@@ -84,6 +89,8 @@ func check_knockback():
 	if knockback.length() > min_knockback: 
 		knockback /= slow_knockback 
 		velocity = knockback 
+		animatedSprite2d.material.set_shader_parameter('enabled', false)
+		
 		move_and_slide() 
 		return 
 
@@ -100,6 +107,7 @@ func check_dir():
 func check_if_attack():
 	if Input.is_action_just_pressed("attack"):
 		current_state = States.ATTACK
+		sfx_sword_slash.play()
 		
 func flip():
 	if player_facing == "right":
@@ -125,13 +133,14 @@ func take_damage(enemy):
 	if can_take_damage:
 		print('taking damage')
 		#animationPlayer.play("hurt")
-		# instead of using hurt animation, use tween bc can't play 2 anim at same time
+		#instead of using hurt animation, use tween bc can't play 2 anim at same time
 		animatedSprite2d.modulate = Color.RED
 		var tween = create_tween()
 		tween.tween_property(animatedSprite2d, 'modulate', Color.WHITE, 0.5)
-		#tween.play()
-		if tween.is_running():
-			print('tween running')
+		tween.play()
+		#animatedSprite2d.material.set_shader_parameter('enabled', true)
+		Global.health -= 50
+		print(Global.health)
 		knockback = (position - enemy.position).normalized() * 400
 		hurtTimer.start()
 		can_take_damage = false

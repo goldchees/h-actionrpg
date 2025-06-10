@@ -1,11 +1,18 @@
-[gd_scene load_steps=66 format=3 uid="uid://ciot2brni3hb6"]
+[gd_scene load_steps=70 format=3 uid="uid://ciot2brni3hb6"]
 
 [ext_resource type="Script" uid="uid://cbt2gicxn2s64" path="res://scripts/player.gd" id="1_s551d"]
 [ext_resource type="Texture2D" uid="uid://dackofgernnyn" path="res://assets/h-player-Sheet.png" id="2_oc1kf"]
+[ext_resource type="Shader" uid="uid://btxibuir0fcxx" path="res://scenes/flash.tres" id="2_qlg0r"]
 [ext_resource type="Texture2D" uid="uid://e48xyq2coo21" path="res://assets/player.png" id="2_yjax8"]
+[ext_resource type="AudioStream" uid="uid://bgd0em0hsudf7" path="res://assets/Audio/drawKnife1.ogg" id="4_dqkch"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_oc1kf"]
 size = Vector2(6, 12)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tuyoq"]
+shader = ExtResource("2_qlg0r")
+shader_parameter/enabled = false
+shader_parameter/tint = Color(1, 1, 1, 1)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0mr0g"]
 atlas = ExtResource("2_oc1kf")
@@ -760,6 +767,9 @@ _data = {
 &"side_attack": SubResource("Animation_0mr0g")
 }
 
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_qlg0r"]
+polygon = PackedVector2Array(-2, -9, 2, -9, 2, -8, 3, -8, 3, -5, 2, -5, 2, -3, 3, -3, 3, -2, 4, -2, 4, -1, 5, -1, 5, 3, 4, 3, 4, 4, 2, 6, 6, 10, 6, 12, 4, 12, -3, 5, -5, 3, -9, 1, -6, -5, -3, -8)
+
 [node name="player" type="CharacterBody2D"]
 motion_mode = 1
 wall_min_slide_angle = 0.0
@@ -770,6 +780,7 @@ position = Vector2(0, -2)
 shape = SubResource("RectangleShape2D_oc1kf")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+material = SubResource("ShaderMaterial_tuyoq")
 sprite_frames = SubResource("SpriteFrames_0mr0g")
 animation = &"side_walk"
 offset = Vector2(1, -15)
@@ -800,6 +811,13 @@ libraries = {
 [node name="hurtTimer" type="Timer" parent="."]
 wait_time = 0.7
 one_shot = true
+
+[node name="sfx_swordSlash" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_dqkch")
+volume_db = 12.0
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+occluder = SubResource("OccluderPolygon2D_qlg0r")
 
 [connection signal="body_entered" from="attackArea" to="." method="_on_attack_area_body_entered"]
 [connection signal="timeout" from="hurtTimer" to="." method="_on_hurt_timer_timeout"]
